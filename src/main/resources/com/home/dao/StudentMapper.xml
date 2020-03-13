@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.home.dao.IStudentDao">
+    <resultMap id="st" type="com.home.entity.Student">
+        <id column="id" property="id"/>
+        <result property="sname" column="sname" jdbcType="VARCHAR"/>
+        <result property="tid" column="tid" jdbcType="INTEGER"/>
+        <result property="createtime" column="createtime" jdbcType="DATE"/>
+        <result property="updatetime" column="updatetime" jdbcType="VARCHAR"/>
+    </resultMap>
+    <select id="findAll" resultType="com.home.entity.Student">
+       SELECT t.name,t.role,t.wechat,s.* FROM student s INNER JOIN timu t ON s.tid=t.id
+    </select>
+    <insert id="addStudent" parameterType="com.home.entity.Student" useGeneratedKeys="true" keyProperty="id">
+        insert into student (sname,tid,createtime,updatetime) values (#{sname,jdbcType=VARCHAR},#{tid,jdbcType=INTEGER},#{createtime,jdbcType=DATE},#{updatetime,jdbcType=VARCHAR})
+    </insert>
+
+    <!--重名验证-->
+    <select id="verifyByName" resultType="com.home.entity.Student">
+          select * from student where sname=#{sname} and tid=#{tid}
+    </select>
+
+    <!--通过外键id进行查询-->
+    <select id="findByTid" parameterType="java.lang.Integer" resultType="com.home.entity.Student">
+          SELECT t.name,t.role,t.wechat,s.* FROM student s INNER JOIN timu t ON s.tid=t.id where tid=#{tid}
+    </select>
+
+    <!--查询所有（分页）-->
+    <select id="findByPage" parameterType="map" resultType="map">
+        SELECT t.name,t.role,t.wechat,s.* FROM student s INNER JOIN timu t ON s.tid=t.id
+        <if test="start!=null and size!=null">
+            limit #{start},#{size}
+        </if>
+    </select>
+    <!-- 查询用户记录总数 -->
+    <select id="selectCount" resultType="int">
+		select count(*) from student
+	</select>
+</mapper>

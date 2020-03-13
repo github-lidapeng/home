@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.home.dao.ITimuDao">
+    <!--查询所有-->
+    <select id="findAll" resultType="com.home.entity.Timu">
+          select * from timu
+    </select>
+
+    <!--添加-->
+    <insert id="addTimu" parameterType="com.home.entity.Timu" keyProperty="id" useGeneratedKeys="true">
+       insert into timu (name,password,wechat,role,PlayTime,createtime,time) values (#{name},#{password},#{wechat},#{role},#{PlayTime},#{createtime},#{time})
+    </insert>
+    <!--重名验证verifyTimuName-->
+    <select id="verifyTimuName" parameterType="java.lang.String" resultType="com.home.entity.Timu">
+      select * from timu where name=#{name}
+    </select>
+
+   <!-- 通过id查询-->
+    <select id="findTimuById" parameterType="java.lang.Integer" resultType="com.home.entity.Timu">
+      select * from timu where id=#{id}
+    </select>
+
+    <!--查询所有（分页）-->
+    <select id="findByPage" parameterType="map" resultType="map">
+        select * from timu
+        <if test="start!=null and size!=null">
+            limit #{start},#{size}
+        </if>
+    </select>
+    <!-- 查询用户记录总数 -->
+    <select id="selectCount" resultType="int">
+		select count(*) from timu
+	</select>
+
+    <!--修改-->
+    <update id="updateTimu" parameterType="com.home.entity.Timu">
+        update timu
+        <set>
+            <if test="name != null and name != ''">name=#{name},</if>
+            <if test="password != null and password != ''">password=#{password},</if>
+            <if test="wechat != null and wechat != ''">wechat=#{wechat},</if>
+            <if test="role != null and role != ''">role=#{role},</if>
+            <if test="vip != null and vip != ''">vip=#{vip}</if>
+        </set>
+        where id=#{id}
+    </update>
+
+    <!--通过用户名进行模糊查询-->
+    <select id="fuzzyByName" parameterType="com.home.entity.Timu" resultType="com.home.entity.Timu">
+        select * from timu 
+        <where>
+            <if test="name != null and name != ''">
+                and name like "%"#{name}"%"
+            </if>
+            <if test="wechat != null and wechat != ''">
+                and wechat like "%"#{wechat}"%"
+            </if>
+        </where>
+        
+    </select>
+</mapper>
